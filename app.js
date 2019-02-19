@@ -1,5 +1,5 @@
 const express = require('express');
-const mongoose = require('mongoose');
+const config = require('config');
 
 const users = require('./routes/users');
 const auth = require('./routes/auth');
@@ -8,12 +8,12 @@ const app = express();
 
 app.use(express.json());
 
-/**
- * Startup requires
- */
+
+// startup requires
 require('./startup/db')();
 
 app.use('/users', users);
 app.use('/auth', auth);
 
-app.listen(3000, () => console.log(`Listening on port 3000...`));
+const hostConfig = config.get('hostConfig');
+app.listen(hostConfig.port, hostConfig.hostname, () => console.log(`Listening on port 3000...`));

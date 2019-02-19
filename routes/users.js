@@ -1,22 +1,26 @@
 const router = require('express').Router();
-const { User } = require('../models/user');
+
+const { User, validateUser } = require('../models/user');
 
 router.post('/', async (req, res) => {
     const { error } = validateUser(req.body);
-    if(error) res.status(400).send('Invalid input');
+    if(error) return res.status(400).send('Invalid input');
 
     let user = await User.findOne({ email: req.body.email });
-    if(user) return res.status(400).send('User already exist');
+    console.log(user)
+
+    if(user) return res.status(400).send('User already exists');
 
     user = new User({
         name: req.body.name,
         email: req.body.email,
         password: req.body.password
     });
+    await user.save()
 
-    user.save()
-        .then(user => res.send(user))
-        .catch(err => res.send(err));
+    const token = user.generateAuthToken();
+    
+    res.header('x-auth-token', token).send(user);
 });
 
 module.exports = router;

@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
+const config = require('config');
+
+const dbConfig = config.get('dbConfig');
 
 module.exports = () => {
-    mongoose.connect('mongodb://localhost/passwords', {
+    mongoose.connect(`mongodb://${dbConfig.host}/${dbConfig.dbName}`, {
             useCreateIndex: true,
             useNewUrlParser: true
         })
