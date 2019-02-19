@@ -19,7 +19,8 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
         unique: true
-    }
+    },
+    isAdmin: Boolean
 });
 
 userSchema.pre('save', async function (next) {
@@ -30,7 +31,7 @@ userSchema.pre('save', async function (next) {
 })
 
 userSchema.methods.generateAuthToken = function () {
-    return jwt.sign({ _id: this._id }, config.get('jwtPrivateKey'));
+    return jwt.sign({ _id: this._id, isAdmin: this.isAdmin }, config.get('jwtPrivateKey'));
 }
 
 function validate(user) {

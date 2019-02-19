@@ -1,6 +1,15 @@
 const router = require('express').Router();
 
 const { User, validateUser } = require('../models/user');
+const auth = require('../middleware/auth');
+
+
+/**
+ * Returns user information. E.g. user `s ID.
+ **/
+router.get('/me', auth, (req, res) => {
+    res.send(req.user._id);
+});
 
 router.post('/', async (req, res) => {
     const { error } = validateUser(req.body);
@@ -19,7 +28,7 @@ router.post('/', async (req, res) => {
     await user.save()
 
     const token = user.generateAuthToken();
-    
+
     res.header('x-auth-token', token).send(user);
 });
 
